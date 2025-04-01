@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة اليانصيب（Lottery page）</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .prizes {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+        }
+
+        .prizes div {
+            text-align: center;
+        }
+
+        .prizes img {
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اليانصيب（Sweepstakes）</h1>
+        <p>الرجاء إدخال اسمك والنقر على "بدء السحب" لبدء السحب!（Please enter your name and click "Start the Lottery" to start the lottery!）</p>
+        <input type="text" id="nameInput" placeholder="الرجاء إدخال اسمك（Please enter your name）">
+        <button onclick="startLottery()">ابدأ اليانصيب（Start the lottery）</button>
+        <div id="result"></div>
+
+        <!--عرض الجائزة（Prize display） -->
+        <div class="prizes">
+            <div>
+                <img src="https://i.postimg.cc/9Xrb1gHf/IMG-3677.jpg?text=1st" alt="الجائزة الأولى هدية الأسد（First Prize Lion Gift）">
+                <p>الجائزة الأولى هدية الأسد（First Prize Lion Gift）</p>
+            </div>
+            <div>
+                <img src="https://i.postimg.cc/L5Fjh2X7/IMG-3675.jpg?text=2nd" alt="الجائزة الثانية هدية ويتشي كيتي（Second Prize Witchy Kitty Gift）">
+                <p>الجائزة الثانية هدية ويتشي كيتي（Second Prize Witchy Kitty Gift）</p>
+            </div>
+            <div>
+                <img src="https://i.postimg.cc/44pzq72T/IMG-3676.jpg?text=3rd" alt="صندوق الكنز الجائزة الثالثة（Third Prize Treasure Box）">
+                <p>صندوق الكنز الجائزة الثالثة（Third Prize Treasure Box）</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startLottery() {
+            const nameInput = document.getElementById('nameInput');
+            const resultDiv = document.getElementById('result');
+            const name = nameInput.value.trim();
+
+            if (name === '') {
+                resultDiv.innerHTML = 'الرجاء إدخال اسمك للمشاركة في السحب!（Please enter your name to participate in the draw!）';
+                return;
+            }
+
+            // 从 sessionStorage 中获取已抽奖的名字
+            const usedNames = JSON.parse(sessionStorage.getItem('usedNames')) || [];
+
+            if (usedNames.includes(name)) {
+                resultDiv.innerHTML = 'لقد شاركت بالفعل في اليانصيب!（You have already entered the draw!）';
+                return;
+            }
+
+            // 定义奖品和概率
+            const prizes = [
+                'الجائزة الأولى هدية الأسد（First Prize Lion Gift）',  // 权重：50%
+                'الجائزة الثانية هدية ويتشي كيتي（Second Prize Witchy Kitty Gift）',  // 权重：30%
+                'صندوق الكنز الجائزة الثالثة（Third Prize Treasure Box）',  // 权重：15%
+                'شكرا لك على جائزة المشاركة روز（Thank you for participating in the Rose Award）'  // 权重：5%
+            ];
+
+            // 根据权重生成奖品池
+            let prizePool = [];
+            prizePool = prizePool.concat(Array(0).fill('الجائزة الأولى هدية الأسد（First Prize Lion Gift）'));
+            prizePool = prizePool.concat(Array(1).fill('الجائزة الثانية هدية ويتشي كيتي（Second Prize Witchy Kitty Gift）'));
+            prizePool = prizePool.concat(Array(5).fill('صندوق الكنز الجائزة الثالثة（Third Prize Treasure Box）'));
+            prizePool = prizePool.concat(Array(50).fill('شكرا لك على جائزة المشاركة روز（Thank you for participating in the Rose Award）'));
+
+            // 随机抽取奖品
+            const randomIndex = Math.floor(Math.random() * prizePool.length);
+            const selectedPrize = prizePool[randomIndex];
+
+            // 显示结果
+            resultDiv.innerHTML = `${name} يملك（Got） ${selectedPrize}！`;
+
+            // 更新已抽奖的名字并存入 sessionStorage
+            usedNames.push(name);
+            sessionStorage.setItem('usedNames', JSON.stringify(usedNames));
+        }
+    </script>
+</body>
+</html>
