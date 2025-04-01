@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽奖页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .prizes {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+        }
+
+        .prizes div {
+            text-align: center;
+        }
+
+        .prizes img {
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>抽奖活动</h1>
+        <p>请输入您的名字，点击“开始抽奖”进行抽奖！</p>
+        <input type="text" id="nameInput" placeholder="请输入您的名字">
+        <button onclick="startLottery()">开始抽奖</button>
+        <div id="result"></div>
+
+        <!-- 奖品展示 -->
+        <div class="prizes">
+            <div>
+                <img src="https://via.placeholder.com/60?text=1st" alt="一等奖">
+                <p>一等奖</p>
+            </div>
+            <div>
+                <img src="https://via.placeholder.com/60?text=2nd" alt="二等奖">
+                <p>二等奖</p>
+            </div>
+            <div>
+                <img src="https://via.placeholder.com/60?text=3rd" alt="三等奖">
+                <p>三等奖</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startLottery() {
+            const nameInput = document.getElementById('nameInput');
+            const resultDiv = document.getElementById('result');
+            const name = nameInput.value.trim();
+
+            if (name === '') {
+                resultDiv.innerHTML = '请输入您的名字再参与抽奖！';
+                return;
+            }
+
+            // 从 localStorage 中获取已抽奖的名字
+            const usedNames = JSON.parse(localStorage.getItem('usedNames')) || [];
+
+            if (usedNames.includes(name)) {
+                resultDiv.innerHTML = '您已经参与过抽奖了！';
+                return;
+            }
+
+            // 定义奖品和概率
+            const prizes = [
+                '一等奖',  // 权重：50%
+                '二等奖',  // 权重：30%
+                '三等奖',  // 权重：15%
+                '谢谢参与'  // 权重：5%
+            ];
+
+            // 根据权重生成奖品池
+            let prizePool = [];
+            prizePool = prizePool.concat(Array(50).fill('一等奖'));
+            prizePool = prizePool.concat(Array(30).fill('二等奖'));
+            prizePool = prizePool.concat(Array(15).fill('三等奖'));
+            prizePool = prizePool.concat(Array(5).fill('谢谢参与'));
+
+            // 随机抽取奖品
+            const randomIndex = Math.floor(Math.random() * prizePool.length);
+            const selectedPrize = prizePool[randomIndex];
+
+            // 显示结果
+            resultDiv.innerHTML = `${name} 获得了 ${selectedPrize}！`;
+
+            // 更新已抽奖的名字
+            usedNames.push(name);
+            localStorage.setItem('usedNames', JSON.stringify(usedNames));
+        }
+    </script>
+</body>
+</html>
